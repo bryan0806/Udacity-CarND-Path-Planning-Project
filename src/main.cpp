@@ -8,6 +8,7 @@
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
+#inclue "spline.h"
 
 using namespace std;
 
@@ -243,11 +244,23 @@ int main() {
 
                 // My code started here !!!!!!!!!!
                 // Try the first code about speed control
+
+
+
+
                 double dist_inc = 0.5;
                     for(int i = 0; i < 50; i++)
                     {
+                          double next_s = car_s + (i+1)*dist_inc;
+                          double next_d = 6;
+                          vector<double> xy = getXY(next_s,next_d,map_waypoints_s,map_waypoints_x,map_waypoints_y);
+                          /* This is first try without direction control
                           next_x_vals.push_back(car_x+(dist_inc*i)*cos(deg2rad(car_yaw)));
                           next_y_vals.push_back(car_y+(dist_inc*i)*sin(deg2rad(car_yaw)));
+                          */
+                          next_x_vals.push_back(xy[0]);
+                          next_y_vals.push_back(xy[1]);
+
                     }
 
 
@@ -255,6 +268,9 @@ int main() {
           	msgJson["next_y"] = next_y_vals;
 
           	auto msg = "42[\"control\","+ msgJson.dump()+"]";
+
+
+                //END TODO
 
           	//this_thread::sleep_for(chrono::milliseconds(1000));
           	ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
