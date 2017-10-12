@@ -197,6 +197,14 @@ int main() {
   	map_waypoints_dy.push_back(d_y);
   }
 
+  //start in lane 1;
+  int lane = 1;
+
+  //have a reference velocity to target
+  // Move to here because we don't want it to be affected every circles
+  double ref_vel = 0; //mph
+
+
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -244,16 +252,13 @@ int main() {
 
 
 
+
                 // My code started here !!!!!!!!!!
 
 
                 int prev_size = previous_path_x.size();
 
-                //start in lane 1;
-                int lane = 1;
 
-                //have a reference velocity to target
-                double ref_vel = 49.5; //mph
 
 
                 if(prev_size > 0)
@@ -279,7 +284,8 @@ int main() {
                         //check s vlues greater than mine and s gap
                         if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                         {
-                            ref_vel = check_speed;
+                            //ref_vel = check_speed;
+                            too_closed = true;
 
                         }
 
@@ -287,6 +293,16 @@ int main() {
 
                     }
 
+                }
+
+
+                if(too_closed)
+                {
+                    ref_vel -= .224;
+                }
+                else if(ref_vel < 49.5)
+                {
+                    ref_vel += .224;
                 }
 
 
