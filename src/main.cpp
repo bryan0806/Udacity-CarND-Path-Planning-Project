@@ -242,14 +242,55 @@ int main() {
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
 
+
+
                 // My code started here !!!!!!!!!!
-                // Try the first code about speed control
+
+
+                int prev_size = previous_path_x.size();
 
                 //start in lane 1;
                 int lane = 1;
 
                 //have a reference velocity to target
                 double ref_vel = 49.5; //mph
+
+
+                if(prev_size > 0)
+                {
+                    car_s = end_path_s;
+                }
+
+                bool too_closed = false;
+
+                //find ref_v to use
+                for(int i =0; i < sensor_fusion.size();i++)
+                {
+                    //car is in my lane
+                    float d = sensor_fusion[i][6];
+                    if(d < (2+4*lane+2) && d > (2+4*lane-2) )
+                    {
+                        double vx = sensor_fusion[i][3];
+                        double vy = sensor_fusion[i][4];
+                        double check_speed = sqrt(vx*vx+vy*vy);
+                        double check_car_s = sensor_fusion[i][5];
+
+                        check_car_s += ((double)prev_size*.02*check_speed); //if using previous points can project a value outward
+                        //check s vlues greater than mine and s gap
+                        if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
+                        {
+                            ref_vel = check_speed;
+
+                        }
+
+
+
+                    }
+
+                }
+
+
+
 
                 //Create a list of widely spaced (x,y) waypoints, evenly spaced at 30m
                 //later we will interpolate these waypoints with a spline and fill it in with more points that control
@@ -265,7 +306,7 @@ int main() {
                 double ref_yaw = deg2rad(car_yaw);
 
                 //if previous size is almost empty, use the car as starting reference
-                int prev_size = previous_path_x.size();
+
 
                 if(prev_size < 2)
                 {
