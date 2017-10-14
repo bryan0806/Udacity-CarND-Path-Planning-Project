@@ -286,6 +286,139 @@ int main() {
                         {
                             //ref_vel = check_speed;
                             too_closed = true;
+                            
+                            // check if there is car in the left lane and safe to turn
+                            if(too_closed && lane==1)
+                            {
+                                
+                                bool ready_to_swift_left = false;
+                                bool ready_to_swift_right = false;
+                                int safe_count_left = 0;
+                                int safe_count_right = 0;
+
+                                
+                                for(int j = 0; j < sensor_fusion.size();j++)
+                                {
+                                    float d = sensor_fusion[j][6];
+                                    
+                                    
+                                    
+                                    if(d < (2+4*(lane-1)+2) && d > (2+4*(lane-1)-2)  ) // left lane has car and
+                                    {
+                                        cout << "yes, there is car in the left" << endl;
+                                        cout << "my car s is " << car_s << endl;
+                                        double check_car_s_left = sensor_fusion[j][5];
+                                        cout << "the car id :" << j << " s:" << check_car_s_left << endl;
+                                        if((check_car_s_left-car_s > 50 or car_s - check_car_s_left > 20) ){ // left lane is safe to swift
+                                            cout << "ready to swift left !!!!!" << endl;
+                                            //lane = 0 ; // to prevent there could still car not yet checking , can not swift now
+                                            ready_to_swift_left = true;
+                                         }
+                                        else if(fabs(check_car_s_left-car_s) < 30){
+                                            safe_count_left += 1;
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    else if(d < (2+4*(lane+1)+2) && d > (2+4*(lane+1)-2) ) // check right lane
+                                    {
+                                        cout << "yes, there is car in the right" << endl;
+                                        cout << "my car s is " << car_s << endl;
+                                        double check_car_s_right = sensor_fusion[j][5];
+                                        cout << "right car id :" << j << " s:" << check_car_s_right << endl;
+                                        if((check_car_s_right-car_s > 50 or car_s - check_car_s_right > 20) ){ // right lane is safe to swift
+                                            cout << "ready to swift to right!!!!!" << endl;
+                                            //lane =  2; / to prevent there could still car not yet checking , can not swift now
+                                            ready_to_swift_right = true;
+                                        }
+                                        else if(fabs(check_car_s_right-car_s) < 30){
+                                            safe_count_right += 1;
+                                        }
+                                        
+                                    }
+                                }
+                                
+                                if(ready_to_swift_left==true and safe_count_left <= 0){
+                                    lane = 0;
+                                }else if(ready_to_swift_right==true and safe_count_right <= 0){
+                                    lane = 2;
+                                }
+                                
+                                
+                            }else if(too_closed && lane==0)
+                            {
+                                bool ready_to_swift_right = false;
+                                int safe_count_right = 0;
+                                
+                                for(int j = 0; j < sensor_fusion.size();j++)
+                                {
+                                    float d = sensor_fusion[j][6];
+                                
+                                    
+                                    
+                                    
+                                    if(d < (2+4*(lane+1)+2) && d > (2+4*(lane+1)-2) ) // check right lane
+                                    {
+                                        cout << "yes, there is car in the right" << endl;
+                                        cout << "my car s is " << car_s << endl;
+                                        double check_car_s_right = sensor_fusion[j][5];
+                                        cout << "right car id :" << j << " s:" << check_car_s_right << endl;
+                                        if((check_car_s_right-car_s > 50 or car_s - check_car_s_right > 20) ){ // right lane is safe to swift
+                                            cout << "ready swift to right!!!!!" << endl;
+                                            //lane =  1;
+                                            ready_to_swift_right = true;
+                                        }
+                                        else if(fabs(check_car_s_right-car_s) < 30){
+                                            safe_count_right += 1;
+                                        }
+                                        
+                                    }
+                                    
+                                }
+                                
+                                if(ready_to_swift_right==true and safe_count_right <= 0){
+                                    lane = 1;
+                                }
+                                
+                                
+                            }else if(too_closed && lane==2)
+                            {
+                                bool ready_to_swift_left = false;
+                                int safe_count_left = 0;
+                                
+                                for(int j = 0; j < sensor_fusion.size();j++)
+                                {
+                                    float d = sensor_fusion[j][6];
+                                    if(d < (2+4*(lane-1)+2) && d > (2+4*(lane-1)-2)  ) // left lane has car and
+                                    {
+                                        cout << "yes, there is car in the left" << endl;
+                                        cout << "my car s is " << car_s << endl;
+                                        double check_car_s_left = sensor_fusion[j][5];
+                                        cout << "the car id :" << j << " s:" << check_car_s_left << endl;
+                                        if((check_car_s_left-car_s > 50 or car_s - check_car_s_left > 20) ){ // left lane is safe to swift
+                                            cout << "ready swift left !!!!!" << endl;
+                                            //lane = 1 ;
+                                            ready_to_swift_left = true;
+                                            
+                                        }
+                                        else if(fabs(check_car_s_left-car_s) < 30){
+                                            safe_count_left += 1;
+                                        }
+                                        
+                                        
+                                    }
+                                    
+                                    
+                                }
+                             
+                                if(ready_to_swift_left==true and safe_count_left <= 0){
+                                    lane = 1;
+                                }
+                                
+                            }
+                            
+                            
 
                         }
 
