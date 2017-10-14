@@ -267,6 +267,8 @@ int main() {
                 }
 
                 bool too_closed = false;
+                bool danger = false;
+                double check_speed;
 
                 //find ref_v to use
                 for(int i =0; i < sensor_fusion.size();i++)
@@ -277,7 +279,7 @@ int main() {
                     {
                         double vx = sensor_fusion[i][3];
                         double vy = sensor_fusion[i][4];
-                        double check_speed = sqrt(vx*vx+vy*vy);
+                        check_speed = sqrt(vx*vx+vy*vy);
                         double check_car_s = sensor_fusion[i][5];
 
                         check_car_s += ((double)prev_size*.02*check_speed); //if using previous points can project a value outward
@@ -286,6 +288,10 @@ int main() {
                         {
                             //ref_vel = check_speed;
                             too_closed = true;
+                            if((check_car_s > car_s) && ((check_car_s-car_s) < 15)) // prevent front car suddenly change lane
+                            {
+                                danger = true;
+                            }
                             
                             // check if there is car in the left lane and safe to turn
                             if(too_closed && lane==1)
@@ -309,7 +315,7 @@ int main() {
                                         cout << "my car s is " << car_s << endl;
                                         double check_car_s_left = sensor_fusion[j][5];
                                         cout << "the car id :" << j << " s:" << check_car_s_left << endl;
-                                        if((check_car_s_left-car_s > 50 or car_s - check_car_s_left > 20) ){ // left lane is safe to swift
+                                        if((check_car_s_left-car_s > 50 or car_s - check_car_s_left > 30) ){ // left lane is safe to swift
                                             cout << "ready to swift left !!!!!" << endl;
                                             //lane = 0 ; // to prevent there could still car not yet checking , can not swift now
                                             ready_to_swift_left = true;
@@ -327,7 +333,7 @@ int main() {
                                         cout << "my car s is " << car_s << endl;
                                         double check_car_s_right = sensor_fusion[j][5];
                                         cout << "right car id :" << j << " s:" << check_car_s_right << endl;
-                                        if((check_car_s_right-car_s > 50 or car_s - check_car_s_right > 20) ){ // right lane is safe to swift
+                                        if((check_car_s_right-car_s > 50 or car_s - check_car_s_right > 30) ){ // right lane is safe to swift
                                             cout << "ready to swift to right!!!!!" << endl;
                                             //lane =  2; / to prevent there could still car not yet checking , can not swift now
                                             ready_to_swift_right = true;
@@ -364,7 +370,7 @@ int main() {
                                         cout << "my car s is " << car_s << endl;
                                         double check_car_s_right = sensor_fusion[j][5];
                                         cout << "right car id :" << j << " s:" << check_car_s_right << endl;
-                                        if((check_car_s_right-car_s > 50 or car_s - check_car_s_right > 20) ){ // right lane is safe to swift
+                                        if((check_car_s_right-car_s > 50 or car_s - check_car_s_right > 30) ){ // right lane is safe to swift
                                             cout << "ready swift to right!!!!!" << endl;
                                             //lane =  1;
                                             ready_to_swift_right = true;
@@ -396,7 +402,7 @@ int main() {
                                         cout << "my car s is " << car_s << endl;
                                         double check_car_s_left = sensor_fusion[j][5];
                                         cout << "the car id :" << j << " s:" << check_car_s_left << endl;
-                                        if((check_car_s_left-car_s > 50 or car_s - check_car_s_left > 20) ){ // left lane is safe to swift
+                                        if((check_car_s_left-car_s > 50 or car_s - check_car_s_left > 30) ){ // left lane is safe to swift
                                             cout << "ready swift left !!!!!" << endl;
                                             //lane = 1 ;
                                             ready_to_swift_left = true;
@@ -431,11 +437,21 @@ int main() {
 
                 if(too_closed)
                 {
-                    ref_vel -= .224;
+                    if(ref_vel>check_speed)
+                    {
+                        ref_vel -= .224;
+                    }
+                    
                 }
                 else if(ref_vel < 49.5)
                 {
                     ref_vel += .224;
+                }
+            
+                if(danger)
+                {
+                    ref_vel -= .224;
+                    
                 }
 
 
