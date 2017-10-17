@@ -38,10 +38,9 @@ if(too_closed)
 >** Like above explain, my car increase/decrease speed by 0.224 mph each update not to exceed max acceleration and jerk.
 
 ### Car does not have collisions.
-Here is my logic for collisions avoidance:
-1.
-2.
-3.
+### The car is able to change lanes
+Here is my logic for collisions avoidance and also change lane:
+1. First I will check if car is in front of our lane, and if other car is within the range of 30m.
 ```
 if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                         {
@@ -51,8 +50,11 @@ if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                             {
                                 danger = true;
                             }
+                            ```
                             
-                            // check if there is car in the left lane and safe to turn
+2. Then I would check left/right lane if there is car near us in some range.
+```
+// check if there is car in the left lane and safe to turn
                             if(too_closed && lane==1)
                             {
                                 
@@ -103,6 +105,14 @@ if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                                         
                                     }
                                 }
+                                ```
+                                
+
+3.Then, after check all other cars , then decide which lane to change
+```
+
+                            
+                            
                                 
                                 if(ready_to_swift_left==true and safe_count_left <= 0){
                                     lane = 0;
@@ -111,7 +121,10 @@ if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                                 }
 ```
 
+4. Same logic for lane = 0 or 2 
+
+
 ### The car stays in its lane, except for the time between changing lanes
 
-### The car is able to change lanes
+
 
