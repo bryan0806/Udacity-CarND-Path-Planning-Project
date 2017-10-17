@@ -50,9 +50,10 @@ if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                             {
                                 danger = true;
                             }
-                            ```
+```
                             
 2. Then I would check left/right lane if there is car near us in some range.
+
 ```
 // check if there is car in the left lane and safe to turn
                             if(too_closed && lane==1)
@@ -105,10 +106,11 @@ if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
                                         
                                     }
                                 }
-                                ```
+```
                                 
 
 3.Then, after check all other cars , then decide which lane to change
+
 ```
 
                             
@@ -126,5 +128,5 @@ if((check_car_s > car_s) && ((check_car_s-car_s) < 30))
 
 ### The car stays in its lane, except for the time between changing lanes
 
-
+>** Yes, I believe it is.
 
